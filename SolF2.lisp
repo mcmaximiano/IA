@@ -27,12 +27,12 @@
   (second pos))
 
 
-;; Solution of phase 1
+;;; Solution of phase 1
 
 (defun getTrackContent (pos track)
   (nth (pos-c pos) (nth (pos-l pos) (track-env track))))
 
-;; Pedir 0,4
+;;; Pedir 0,4
 (defun isObstaclep (pos track)
   "check if the position pos is an obstacle"
   (or (< (pos-l pos) 0) (< (pos-c pos) 0)
@@ -40,7 +40,7 @@
       (>= (pos-c pos) (pos-c (track-size track)))
       (null (getTrackContent pos track))))
 
-;; Pedir 0,4
+;;; Pedir 0,4
 (defun isGoalp (st) 
   "check if st is a solution of the problem"
   (let ((current-position (state-pos st))
@@ -48,7 +48,7 @@
     (and (member current-position (track-endpositions track) :test #'equalp)
 	 T)))
 
-;; Pedir 1,2
+;;; Pedir 1,2
 (defun nextState (st act)
   "generate the nextState after state st and action act from prolem"
   (let ((new-state (make-state :action act :track (state-track st))))
@@ -70,13 +70,18 @@
 
 
 
-;; Solution of phase 2
+;;; Solution of phase 2
 
 ;;; Pedir 
 (defun nextStates (st)
   "generate all possible next states"
-	(list st))
-
+	(let ((lst (list ())))
+		(dolist (act possible-actions lst)
+			(push (nextState st act) (cdr(last lst)))
+		;;;(list st))
+		)
+	)
+)
 ;;; limdepthfirstsearch 
 (defun limdepthfirstsearch (problem lim &key cutoff?)
   "limited depth first search
@@ -86,7 +91,7 @@
 	(list (make-node :state (problem-initial-state problem))) )
 				      
 
-;iterlimdepthfirstsearch
+;;; iterlimdepthfirstsearch
 (defun iterlimdepthfirstsearch (problem &key (lim most-positive-fixnum))
   "limited depth first search
      st - initial state
