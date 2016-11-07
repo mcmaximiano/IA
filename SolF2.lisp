@@ -75,20 +75,40 @@
 ;;; Pedir 
 (defun nextStates (st)
   "generate all possible next states"
-	(let ((lst (list ())))
-		(dolist (act possible-actions lst)
-			(push (nextState st act) (cdr(last lst)))
-		;;;(list st))
-		)
-	)
+	(let ((lst '()))
+        (dolist (act (possible-actions) lst)
+            (push (nextState st act) lst)
+        )
+    )
 )
+
 ;;; limdepthfirstsearch 
 (defun limdepthfirstsearch (problem lim &key cutoff?)
   "limited depth first search
      st - initial state
      problem - problem information
      lim - depth limit"
-	(list (make-node :state (problem-initial-state problem))) )
+     
+     (let* ((this (make-node :state (problem-initial-state problem)))
+            (successors (list (nextStates (this-state)))))
+        
+        (dolist (successor successors)
+        (cond
+        
+            ((isGoalp(this-state)) this)
+            
+            ((endp successors) nil)
+            
+            ((= lim 0)nil)
+        
+            (t( limdepthfirstsearch((append(mapcar #'(lambda (s) (make-problem
+                                                        :initial-state s
+                                                        :fn-isGoal #'isGoalp
+                                                        :fn-nextstates #'nextStates))) lim-1)))))
+        )
+	)
+)
+	
 				      
 
 ;;; iterlimdepthfirstsearch
