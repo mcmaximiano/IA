@@ -90,24 +90,60 @@
      lim - depth limit"
      
      (let* ((this (make-node :state (problem-initial-state problem)))
-            (successors (list (nextStates (this-state)))))
-        
-        (dolist (successor successors)
-        (cond
-        
-            ((isGoalp(this-state)) this)
+            (successors (list (nextStates (node-state this)))) )
             
-            ((endp successors) nil)
-            
-            ((= lim 0)nil)
         
-            (t( limdepthfirstsearch((append(mapcar #'(lambda (s) (make-problem
-                                                        :initial-state s
-                                                        :fn-isGoal #'isGoalp
-                                                        :fn-nextstates #'nextStates))) lim-1)))))
-        )
+        ;(dolist (successor successors)
+            (cond
+                    ;IF this-state is goal, returns state
+                    ((isGoalp (node-state this)) (RETURN this))
+                    
+                    ;IF this-state has no successors, return nil, aka, exit cond and continue doList
+                    ((endp successors) nil)
+                    
+                    ;IF depth limit is achieved, dont expand this, instead continue cond
+                    ((>= lim 0) nil)
+                
+                    ;ELSE expand this (recursive)
+                    (T (for each successor in (nextStates current-node)) do
+                        (let ((new_problem (make-problem 
+                                                :initial-state successor
+                                                :fn-isGoal #'isGoalp
+                                                :fn-nextStates #'nextStates))
+                            ((solution (limdepthfirstsearch new_problem limit-1)))
+                            (when solution (RETURN solution)) )
+                        )
+                    )
+                )
+            
+            
+            
+            
+            
+;;             limdepthfirstsearch((append(mapcar #'(lambda (s) (make-problem
+;;                                                                     :initial-state s
+;;                                                                     :fn-isGoal #'isGoalp
+;;                                                                     :fn-nextstates #'nextStates))) 
+;;                                                                         lim-1)))))
+            
 	)
 )
+	
+	
+#|		
+(defun depth-limited-search (problem &optional (limit infinity)(node (create-start-node problem)))
+  "Search depth-first, but only up to LIMIT branches deep in the tree."
+  (cond 
+        ((goal-test problem node) node)
+        ((>= (node-depth node) limit) :cut-off)
+        (t (for each n in (expand node problem) do
+            (let ((solution (depth-limited-search problem limit n)))
+            (when solution (RETURN solution)))))))
+|#
+	
+	
+	
+	
 	
 				      
 
@@ -119,3 +155,17 @@
      lim - limit of depth iterations"
 	(list (make-node :state (problem-initial-state problem))) )
 
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
