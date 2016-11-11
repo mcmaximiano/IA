@@ -89,33 +89,45 @@
      problem - problem information
      lim - depth limit"
      
+     ;(print "head")
+     
      (let* ((this (make-node :state (problem-initial-state problem)))
-            (successors (list (nextStates (node-state this)))) )
+            (successors (nextStates (node-state this))))
             
         
         ;(dolist (successor successors)
             (cond
                     ;IF this-state is goal, returns state
-                    ((isGoalp (node-state this)) (RETURN this))
+                    ((isGoalp (node-state this)) (return-from limdepthfirstsearch this))
+                    
+                    
                     
                     ;IF this-state has no successors, return nil, aka, exit cond and continue doList
                     ((endp successors) nil)
                     
+                    
                     ;IF depth limit is achieved, dont expand this, instead continue cond
-                    ((>= lim 0) nil)
+                    ((<= lim 0) nil)
+                    
                 
                     ;ELSE expand this (recursive)
-                    (T (for each successor in (nextStates current-node)) do
+                    (T (dolist (successor successors)
+                       ; (print "inside loop")
+                        (print successor)
                         (let ((new_problem (make-problem 
                                                 :initial-state successor
                                                 :fn-isGoal #'isGoalp
                                                 :fn-nextStates #'nextStates))
-                            ((solution (limdepthfirstsearch new_problem limit-1)))
-                            (when solution (RETURN solution)) )
+                                            (lim (- lim 1)))
+                        ;(let ((solution (limdepthfirstsearch new_problem (- lim 1))))
+                         ;   (when solution (RETURN solution))
+                            
+                        (if (funcall 'limdepthfirstsearch new_problem lim)(print "goal")(print "rip"))
+             
                         )
                     )
                 )
-            
+            )
             
             
             
@@ -145,7 +157,17 @@
 	
 	
 	
-				      
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+#|				      
 
 ;;; iterlimdepthfirstsearch
 (defun iterlimdepthfirstsearch (problem &key (lim most-positive-fixnum))
@@ -155,7 +177,7 @@
      lim - limit of depth iterations"
 	(list (make-node :state (problem-initial-state problem))) )
 
-
+|#
 	
 	
 	
