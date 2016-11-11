@@ -1,5 +1,5 @@
-(load "datastructures.lisp")
-(load "auxfuncs.lisp")
+(load "datastructures.fas")
+(load "auxfuncs.fas")
 
 
 ;;; TAI position
@@ -83,125 +83,55 @@
 )
 
 ;;; limdepthfirstsearch 
-(defun limdepthfirstsearch (problem lim &key cutoff?)
+(defun limdepthfirstsearch (problem lim)
   "limited depth first search
      st - initial state
      problem - problem information
      lim - depth limit"
      
-     ;(print "head")
-     (return (recursive_ldfs(make-node :state (problem-initial-state problem)) problem lim ))
+     (recursive_ldfs (problem-initial-state problem) problem lim)
 )
 
 
 
 
-(defun recursive_ldfs (state problem lim &key cutoff?)
-
-
-        (if (funcall (problem-fn-isGoal problem) state) (return-from recursive_ldfs state)
-        
-                                                        (if (= lim 0) (return ':corte)))
-        
-        
-        
-        (setf corte_flag nil)
-        (let ((successors (nextstates state)))
-            (loop for successor in successors do
-                (let ((result (recursive_ldfs successor problem (- lim 1))))
-                    (if (= result corte) (setf corte_flag t))
-                    (else if (not (= result nil) (return successor)))
-                )
+(defun recursive_ldfs (state problem lim)
+    (let ((corte_flag nil))
+    (if (funcall (problem-fn-isGoal problem) state) (return-from recursive_ldfs (list state))
+    
+    (if (= lim 0) (return-from recursive_ldfs ':corte)))
+    (setf corte_flag nil)
+    (let ((successors (nextstates state)))
+        (loop for successor in successors do
+            (let ((result (recursive_ldfs successor problem (- lim 1))))
+                (if (equal result ':corte) (setf corte_flag t)
+                (if (not (equal result nil)) (return-from recursive_ldfs (append (list state) result ) )))
             )
-            (if (= corte_flag t) (return ':corte))
-            (else (return nil))
         )
+        (if (equal corte_flag t) (return-from recursive_ldfs ':corte)
+        (return-from recursive_ldfs nil))
+    )
+    )
 )
                 
-            
-
-     ;(let* (
-      ;      (successors (nextStates (node-state this))))
-            
-       #| 
-        ;(dolist (successor successors)
-            (cond
-                    ;IF this-state is goal, returns state
-                    ((funcall (problem-fn-isGoal problem) (node-state this)) (return-from limdepthfirstsearch this))
-                    
-                    
-                    
-                    ;IF this-state has no successors, return nil, aka, exit cond and continue doList
-                    ((endp successors) nil)
-                    
-                    
-                    ;IF depth limit is achieved, dont expand this, instead continue cond
-                    ((<= lim 0) ':corte)
-                    
-                
-                    ;ELSE expand this (recursive)
-                    (T (dolist (successor successors)
-                       ; (print "inside loop")
-                        (print successor)
-                        ;(let ((solution (limdepthfirstsearch new_problem (- lim 1))))
-                         ;   (when solution (RETURN solution))
-                            
-                        (if (funcall 'limdepthfirstsearch new_problem lim)(print "goal")(print "rip"))
-             
-                        )
-                    )
-                )
-            )
-            
-            
-            |#
-            
-;;             limdepthfirstsearch((append(mapcar #'(lambda (s) (make-problem
-;;                                                                     :initial-state s
-;;                                                                     :fn-isGoal #'isGoalp
-;;                                                                     :fn-nextstates #'nextStates))) 
-;;                                                                         lim-1)))))
-            
-	
-
-	
-	
-#|		
-(defun depth-limited-search (problem &optional (limit infinity)(node (create-start-node problem)))
-  "Search depth-first, but only up to LIMIT branches deep in the tree."
-  (cond 
-        ((goal-test problem node) node)
-        ((>= (node-depth node) limit) :cut-off)
-        (t (for each n in (expand node problem) do
-            (let ((solution (depth-limited-search problem limit n)))
-            (when solution (RETURN solution)))))))
-|#
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-#|				      
+				      
 
 ;;; iterlimdepthfirstsearch
-(defun iterlimdepthfirstsearch (problem &key (lim most-positive-fixnum))
+(defun iterlimdepthfirstsearch (problem)
   "limited depth first search
      st - initial state
      problem - problem information
      lim - limit of depth iterations"
-	(list (make-node :state (problem-initial-state problem))) )
+    
+    (loop for lim from 0 do
+    
+        (if (equal nil (limdepthfirstsearch problem lim) ) (return-from iterlimdepthfirstsearch nil))
+        (if (equal ':corte (limdepthfirstsearch problem lim)) () (return-from iterlimdepthfirstsearch (limdepthfirstsearch problem lim)))
+    )
+    
+     
+)
 
-|#
 	
 	
 	
