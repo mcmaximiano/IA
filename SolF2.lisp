@@ -90,15 +90,44 @@
      lim - depth limit"
      
      ;(print "head")
-     
-     (let* ((this (make-node :state (problem-initial-state problem)))
-            (successors (nextStates (node-state this))))
-            
+     (return (recursive_ldfs(make-node :state (problem-initial-state problem)) problem lim ))
+)
+
+
+
+
+(defun recursive_ldfs (state problem lim &key cutoff?)
+
+
+        (if (funcall (problem-fn-isGoal problem) state) (return-from recursive_ldfs state)
         
+                                                        (if (= lim 0) (return ':corte)))
+        
+        
+        
+        (setf corte_flag nil)
+        (let ((successors (nextstates state)))
+            (loop for successor in successors do
+                (let ((result (recursive_ldfs successor problem (- lim 1))))
+                    (if (= result corte) (setf corte_flag t))
+                    (else if (not (= result nil) (return successor)))
+                )
+            )
+            (if (= corte_flag t) (return ':corte))
+            (else (return nil))
+        )
+)
+                
+            
+
+     ;(let* (
+      ;      (successors (nextStates (node-state this))))
+            
+       #| 
         ;(dolist (successor successors)
             (cond
                     ;IF this-state is goal, returns state
-                    ((isGoalp (node-state this)) (return-from limdepthfirstsearch this))
+                    ((funcall (problem-fn-isGoal problem) (node-state this)) (return-from limdepthfirstsearch this))
                     
                     
                     
@@ -107,18 +136,13 @@
                     
                     
                     ;IF depth limit is achieved, dont expand this, instead continue cond
-                    ((<= lim 0) nil)
+                    ((<= lim 0) ':corte)
                     
                 
                     ;ELSE expand this (recursive)
                     (T (dolist (successor successors)
                        ; (print "inside loop")
                         (print successor)
-                        (let ((new_problem (make-problem 
-                                                :initial-state successor
-                                                :fn-isGoal #'isGoalp
-                                                :fn-nextStates #'nextStates))
-                                            (lim (- lim 1)))
                         ;(let ((solution (limdepthfirstsearch new_problem (- lim 1))))
                          ;   (when solution (RETURN solution))
                             
@@ -130,7 +154,7 @@
             )
             
             
-            
+            |#
             
 ;;             limdepthfirstsearch((append(mapcar #'(lambda (s) (make-problem
 ;;                                                                     :initial-state s
@@ -138,8 +162,8 @@
 ;;                                                                     :fn-nextstates #'nextStates))) 
 ;;                                                                         lim-1)))))
             
-	)
-)
+	
+
 	
 	
 #|		
